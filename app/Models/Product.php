@@ -9,13 +9,10 @@ class Product extends Model
 {
     use HasFactory;
 
-    // 💡 仕様書に沿った複数形のテーブル名を明記
-    protected $table = 'products';
-
-    // 🛡️ プログラム側から一括保存を許可するカラム一覧（ホワイトリスト）
+    // 一括画面登録を許可する項目を設定
     protected $fillable = [
-        'company_id',
         'product_name',
+        'company_id',
         'price',
         'stock',
         'comment',
@@ -23,10 +20,52 @@ class Product extends Model
     ];
 
     /**
-     * companiesテーブルとの多対1のリレーション（紐付け）を定義
+     * メーカーテーブルとのリレーション定義
      */
     public function company()
     {
-        return $this->belongsTo(Company::class, 'company_id');
+        return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * 商品情報一覧の検索・取得処理（指摘4）
+     */
+    public function getListWithSearch($search, $companyId)
+    {
+        $query = self::with('company');
+
+        if (!empty($search)) {
+            $query->where('product_name', 'LIKE', '%' . $search . '%');
+        }
+
+        if (!empty($companyId)) {
+            $query->where('company_id', $companyId);
+        }
+
+        return $query->get();
+    }
+
+    /**
+     * 新規商品登録処理（指摘4）
+     */
+    public function storeProduct(array $data)
+    {
+        return self::create($data);
+    }
+
+    /**
+     * 商品更新処理（指摘4）
+     */
+    public function updateProduct(array $data)
+    {
+        return $this->update($data);
+    }
+
+    /**
+     * 商品削除処理（指摘4）
+     */
+    public function destroyProduct()
+    {
+        return $this->delete();
     }
 }

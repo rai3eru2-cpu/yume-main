@@ -68,4 +68,20 @@ class Product extends Model
     {
         return $this->delete();
     }
+
+    /**
+     * 指定されたIDの商品データを1件取得する（指摘4）
+     */
+    public function getProductById($id)
+    {
+        return self::findOrFail($id);
+    }
+
+    /**
+     * 指定されたIDの商品データをメーカー情報付きで1件取得する（指摘4）
+     */
+    public function getProductWithCompanyById($id)
+    {
+        return self::with('company')->findOrFail($id);
+    }
 }

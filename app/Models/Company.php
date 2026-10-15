@@ -25,4 +25,12 @@ class Company extends Model
     {
         return $this->hasMany(Product::class, 'company_id');
     }
+
+    /**
+     * すべてのメーカーデータを取得する（指摘4）
+     */
+    public function getCompaniesAll()
+    {
+        return self::all();
+    }
 }
